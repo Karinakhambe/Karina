@@ -1,18 +1,11 @@
-# Binary Search
-**What is a Binary Search?**
+# Hashing Search
+**What is a Hashing Search?**
 
-Binary Search is a searching algorithm for finding an element's position in a sorted array.
+Hashing is a technique or process of mapping keys, values into the hash table by using a hash function. It is done for faster access to elements. The efficiency of mapping depends on the efficiency of the hash function used.
 
 ## Example
 ![alt text](https://media.geeksforgeeks.org/wp-content/cdn-uploads/HashingDataStructure-min-1024x512.png)
 
-## A simple approach to implement a linear search is -
 
-1. Compare x with the middle element.
-2. If x matches with the middle element, we return the mid index.
-3. Else If x is greater than the mid element, then x can only lie in the right half subarray after the mid element. So we recur for the right half.
-4. Else (x is smaller) recur for the left half.
 
-## Input and Output -
-![alt text](https://qawithexperts.com/Images/Upload/20-07-2018/binary-search-program-in-c-min.png)
 
