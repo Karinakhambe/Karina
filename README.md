@@ -4,7 +4,7 @@
 Binary Search is a searching algorithm for finding an element's position in a sorted array.
 
 ## Example
-![alt text](https://media.geeksforgeeks.org/wp-content/uploads/20220309171621/BinarySearch.png)
+![alt text](https://media.geeksforgeeks.org/wp-content/cdn-uploads/HashingDataStructure-min-1024x512.png)
 
 ## A simple approach to implement a linear search is -
 
