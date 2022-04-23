@@ -1,147 +1,146 @@
-// C++ program to find union and intersection of
-// two unsorted linked lists in O(m+n) time.
-#include <bits/stdc++.h>
-using namespace std;
+// C program for the above approach
+#include <stdio.h>
+#include <stdlib.h>
 
-/* Link list node */
-struct Node {
-	int data;
-	struct Node* next;
+struct HashNode {
+	int key;
+	int value;
 };
 
-/* A utility function to insert a node at the
-beginning of a linked list*/
-void push(struct Node** head_ref, int new_data)
+const int capacity = 20;
+int size = 0;
+
+struct HashNode** arr;
+struct HashNode* dummy;
+
+// Function to add key value pair
+void insert(int key, int V)
 {
-	/* allocate node */
-	struct Node* new_node = (struct Node*)malloc(
-		sizeof(struct Node));
 
-	/* put in the data */
-	new_node->data = new_data;
+	struct HashNode* temp
+		= (struct HashNode*)malloc(sizeof(struct HashNode));
+	temp->key = key;
+	temp->value = V;
 
-	/* link the old list off the new node */
-	new_node->next = (*head_ref);
+	// Apply hash function to find
+	// index for given key
+	int hashIndex = key % capacity;
 
-	/* move the head to point to the new node */
-	(*head_ref) = new_node;
-}
-
-/* Utility function to store the
-elements of both list */
-void storeEle(struct Node* head1, struct Node* head2,
-			unordered_map<int, int>& eleOcc)
-{
-	struct Node* ptr1 = head1;
-	struct Node* ptr2 = head2;
-
-	// Traverse both lists
-	while (ptr1 != NULL || ptr2 != NULL) {
-		// store element in the map
-		if (ptr1 != NULL) {
-			eleOcc[ptr1->data]++;
-			ptr1 = ptr1->next;
-		}
-
-		// store element in the map
-		if (ptr2 != NULL) {
-			eleOcc[ptr2->data]++;
-			ptr2 = ptr2->next;
-		}
+	// Find next free space
+	while (arr[hashIndex] != NULL
+		&& arr[hashIndex]->key != key
+		&& arr[hashIndex]->key != -1) {
+		hashIndex++;
+		hashIndex %= capacity;
 	}
+
+	// If new node to be inserted
+	// increase the current size
+	if (arr[hashIndex] == NULL
+		|| arr[hashIndex]->key == -1)
+		size++;
+
+	arr[hashIndex] = temp;
 }
 
-/* Function to get the union of two
-linked lists head1 and head2 */
-struct Node* getUnion(
-	unordered_map<int, int> eleOcc)
+// Function to delete a key value pair
+int delete (int key)
 {
-	struct Node* result = NULL;
+	// Apply hash function to find
+	// index for given key
+	int hashIndex = key % capacity;
 
-	// Push all the elements into
-	// the resultant list
-	for (auto it = eleOcc.begin(); it != eleOcc.end(); it++)
-		push(&result, it->first);
+	// Finding the node with given
+	// key
+	while (arr[hashIndex] != NULL) {
+		// if node found
+		if (arr[hashIndex]->key == key) {
+			// Insert dummy node here
+			// for further use
+			arr[hashIndex] = dummy;
 
-	return result;
-}
+			// Reduce size
+			size--;
 
-/* Function to get the intersection of
-two linked lists head1 and head2 */
-struct Node* getIntersection(
-	unordered_map<int, int> eleOcc)
-{
-	struct Node* result = NULL;
-
-	// Push a node with an element
-	// having occurrence of 2 as that
-	// means the current element is
-	// present in both the lists
-	for (auto it = eleOcc.begin();
-		it != eleOcc.end(); it++)
-		if (it->second == 2)
-			push(&result, it->first);
-
-	// return resultant list
-	return result;
-}
-
-/* A utility function to print a linked list*/
-void printList(struct Node* node)
-{
-	while (node != NULL) {
-		printf("%d ", node->data);
-		node = node->next;
+			// Return the value of the key
+			return 1;
+		}
+		hashIndex++;
+		hashIndex %= capacity;
 	}
+
+	// If not found return null
+	return 0;
 }
 
-// Prints union and intersection of
-// lists with head1 and head2.
-void printUnionIntersection(Node* head1,
-							Node* head2)
+// Function to search the value
+// for a given key
+int find(int key)
 {
-	// Store all the elements of
-	// both lists in the map
-	unordered_map<int, int> eleOcc;
-	storeEle(head1, head2, eleOcc);
+	// Apply hash function to find
+	// index for given key
+	int hashIndex = (key % capacity);
 
-	Node* intersection_list = getIntersection(eleOcc);
-	Node* union_list = getUnion(eleOcc);
+	int counter = 0;
 
-	printf("\nIntersection list is \n");
-	printList(intersection_list);
+	// Find the node with given key
+	while (arr[hashIndex] != NULL) {
 
-	printf("\nUnion list is \n");
-	printList(union_list);
+		int counter = 0;
+		// If counter is greater than
+		// capacity
+		if (counter++ > capacity)
+			break;
+
+		// If node found return its
+		// value
+		if (arr[hashIndex]->key == key)
+			return arr[hashIndex]->value;
+
+		hashIndex++;
+		hashIndex %= capacity;
+	}
+
+	// If not found return
+	// -1
+	return -1;
 }
 
-/* Driver program to test above function*/
+// Driver Code
 int main()
 {
-	/* Start with the empty list */
-	struct Node* head1 = NULL;
-	struct Node* head2 = NULL;
+	// Space allocation
+	arr = (struct HashNode**)malloc(sizeof(struct HashNode*)
+									* capacity);
+	// Assign NULL initially
+	for (int i = 0; i < capacity; i++)
+		arr[i] = NULL;
 
-	/* create a linked list 11->10->15->4->20 */
-	push(&head1, 1);
-	push(&head1, 2);
-	push(&head1, 3);
-	push(&head1, 4);
-	push(&head1, 5);
+	dummy
+		= (struct HashNode*)malloc(sizeof(struct HashNode));
 
-	/* create a linked list 8->4->2->10 */
-	push(&head2, 1);
-	push(&head2, 3);
-	push(&head2, 5);
-	push(&head2, 6);
+	dummy->key = -1;
+	dummy->value = -1;
 
-	printf("First list is \n");
-	printList(head1);
+	insert(1, 5);
+	insert(2, 15);
+	insert(3, 20);
+	insert(4, 7);
 
-	printf("\nSecond list is \n");
-	printList(head2);
+	if (find(4) != -1)
+		printf("Value of Key 4 = %d\n", find(4));
+	else
+		printf("Key 4 does not exists\n");
 
-	printUnionIntersection(head1, head2);
+	if (delete (4))
+		printf("Node value of key 4 is deleted "
+			"successfully\n");
+	else {
+		printf("Key does not exists\n");
+	}
 
-	return 0;
+	if (find(4) != -1)
+		printf("Value of Key 4 = %d\n", find(4));
+	else
+		printf("Key 4 does not exists\n");
 }
